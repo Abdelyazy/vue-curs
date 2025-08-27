@@ -1,11 +1,21 @@
-<script setup></script>
+<script setup>
+import {ref } from 'vue'
+
+const count = ref(0)
+
+
+function increaseCount(event) {
+
+  
+  count.value++
+}
+
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+
+  <button @click="increaseCount">Увеличить на 1</button>
+  <p>Счетсчик: {{ count }}</p>
 </template>
 
-<style scoped></style>
+<style src="./App.css"></style>
