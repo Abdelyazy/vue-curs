@@ -1,7 +1,7 @@
 <script setup>
   import { ref } from 'vue'
 
-  const count = 'Hellow World'
+  const count = ref('World')
 
 </script>
 
