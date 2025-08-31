@@ -1,5 +1,6 @@
 <script setup>
 import { reactive, computed, onMounted } from 'vue'
+import BasketTable from './components/BasketTable.vue'
 
 // Функция для загрузки корзины из localStorage
 const loadBasketFromStorage = () => {
@@ -91,84 +92,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container basket">
-      <table class="basket-table">
-        <thead class="basket-table__header">
-          <tr>
-            <th>Product Details</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Subtotal</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody class="basket-table__body">
-          <tr v-for="(basketItem, index) in basket" :key="basketItem.id">
-            <td>
-              <div class="basket-item">
-                <div class="basket-item__image">
-                  <img :src="basketItem.imageUrl" alt="" />
-                </div>
-                <div class="basket-item__info">
-                  <h2 class="basket-item__info-h2">{{ basketItem.name }}</h2>
-                  <p class="basket-item__info-p">{{ basketItem.color }}</p>
-                  <p class="basket-item__info-p"> {{ basketItem.size }}</p>
-                </div>
-              </div>
-            </td>
-            <td>
-              <p class="basket-item__price">{{ basketItem.price }} $</p>
-            </td>
-            <td>
-              <div class="basket-item__quantity">
-                <button @click="decreaseItemQuantity(index)" class="quantity-button">–</button>
-                <input type="number" :value="basketItem.quantity" min="1" readonly />
-                <button @click="increaseItemQuantity(index)" class="quantity-button">+</button>
-              </div>
-            </td>
-            <td>
-              <p class="basket-item__price">{{ (basketItem.price * basketItem.quantity).toFixed(2) }} $</p>
-            </td>
-            <td>
-              <button @click="removeItem(index)" class="btn btn-delete" aria-label="Удалить">
-                <svg
-                  class="w-6 h-6 text-gray-800 dark:text-white"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"
-                  />
-                </svg>
-              </button>
-            </td>
-          </tr>
-
-          <tr v-if="!basket.length">
-            <td colspan="5">
-              <p class="basket-table__empty">No items</p>
-            </td>
-          </tr>
-
-          <tr v-if="basket.length">
-            <td colspan="5">
-              <div class="basket-table__summary">
-                <p class="basket-table__total">Total <b>{{ totalPrice.toFixed(2) }} $</b></p>
-                <p>Tax {{ totalTax.toFixed(2) }} $</p>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <BasketTable
+  :basket="basket"
+  :totalPrice="totalPrice"
+  :totalTax="totalTax"
+  @increaseItemQuantity="increaseItemQuantity"
+  @decreaseItemQuantity="decreaseItemQuantity"
+  @removeItem="removeItem"
+  />
 </template>
 
 <style src="./App.css"></style>
