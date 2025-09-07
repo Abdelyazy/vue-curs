@@ -1,6 +1,7 @@
 <script setup>
-  import { reactive, computed } from 'vue'
+  import { reactive, computed, ref } from 'vue'
   import TodoListitem from './components/TodoListitem.vue'
+  import TodoForm from './components/TodoForm.vue'
 
   const todos = reactive([
     {
@@ -20,6 +21,8 @@
     }
   ])
 
+  const newTodoText = ref('')
+
   const removeTodo = (index) => {
     todos.splice(index, 1)
   }
@@ -38,11 +41,23 @@
     todos.splice(0, todos.length)
   }
 
+  const addTodo = () => {
+    if (newTodoText.value.trim()) {
+      todos.push({
+        id: Date.now(),
+        text: newTodoText.value.trim(),
+        completed: false
+      })
+    }
+  }
+
 </script>
 
 <template>
   <div class="container todo-app">
     <h1 class="title">Todo List</h1>
+
+    <TodoForm v-model="newTodoText" @add-todo="addTodo" class="todo-app__form"  />
     <div class="todo-app__main">
       <ul class="todo-list">
         <li class="todo-list__item"  v-for="(todo, index) in todos" :key="todo.id" :class="{ 'todo-list__item--completed': todo.completed }">
