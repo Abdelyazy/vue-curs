@@ -17,7 +17,7 @@
 - Реактивные данные с `reactive` и `ref`
 - События между компонентами через `defineEmits()`
 
-![Demo of the To-Do App](./preview.gif)
+![Demo of the To-Do App](./preview.gif) 
 
 ## Настройка IDE
 
