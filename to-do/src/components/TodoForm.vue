@@ -1,48 +1,21 @@
-<script setup>
-  const emit = defineEmits(['add-todo'])
-  const text = defineModel()
-
-  const handleAdd = () => {
-    if (text.value?.trim()) {
-      emit('add-todo', text.value.trim())
-      text.value = ''
-    }
-  }
-</script>
-
 <template>
-  <form class="form" @submit.prevent="handleAdd">
+  <form class="form" @submit.prevent="handleSubmit">
     <div class="form__group form__group--todo">
-      <input class="form-control" type="text" v-model="text" placeholder="Новая задача"/>
-      <button class="btn btn--add-todo" @click="handleAdd" type="submit">Добавить</button>
+      <input class="form-control" type="text" placeholder="Новая задача" v-model.trim="newTodo"/>
+      <button class="btn btn--add-todo" type="submit">Добавить</button>
     </div>
   </form>
 </template>
 
-<style scoped>
-  .form {
-  display: block;
-  margin-bottom: 2rem;
-}
+<script setup>
+  import { ref } from 'vue'
+  const newTodo = ref('')
+  const $emit = defineEmits(['add-todo'])
 
-.form__group {
-  display: flex;
-  width: 100%;
-}
-
-.form-control {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px 0 0 5px;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: #6574cd;
-}
-
-.btn--add-todo {
-  border-radius: 0 5px 5px 0;
-}
-</style>
+  const handleSubmit = () => {
+    if (newTodo.value) {
+      $emit('add-todo', newTodo.value)
+      newTodo.value = ''
+    }
+  }
+</script>

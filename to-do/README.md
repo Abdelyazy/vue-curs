@@ -1,44 +1,35 @@
-# To-Do List App
+# vue-project
 
-Приложение для управления списком задач, разработанное с использованием Vue 3, Composition API и Vite.
+This template should help get you started developing with Vue 3 in Vite.
 
-## Функции
+## Recommended IDE Setup
 
-- **Добавление задач**: Введите текст в поле и нажмите "Добавить" или Enter.
-- **Отметка завершения**: Кликните на задачу для переключения статуса.
-- **Удаление задач**: Используйте кнопку "Удалить" у каждой задачи.
-- **Очистка списка**: Удалите все завершенные или все задачи одним кликом.
-- **Счетчик оставшихся задач**: Отображает количество незавершенных задач.
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-## Ключевые технологии
+## Customize configuration
 
-- Vue 3 Composition API
-- Использование `defineModel()` для двусторонней привязки данных в компоненте TodoForm
-- Реактивные данные с `reactive` и `ref`
-- События между компонентами через `defineEmits()`
+See [Vite Configuration Reference](https://vite.dev/config/).
 
-![Demo of the To-Do App](./preview.gif) 
-
-## Настройка IDE
-
-Рекомендуется использовать [VSCode](https://code.visualstudio.com/) с расширением [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (отключите Vetur, если установлен).
-
-## Структура проекта
-
-- `App.vue`: Главный компонент, содержащий все задачи и управление ими.
-- `TodoForm.vue`: Компонент формы для добавления новых задач с использованием `defineModel()` для двусторонней привязки.
-- `TodoListitem.vue`: Компонент для отображения отдельной задачи с кнопками удаления и переключения статуса.
-
-## Настройка проекта
+## Project Setup
 
 ```sh
 npm install
 ```
 
-### Скрипты
+### Compile and Hot-Reload for Development
 
-- `npm run dev` - Запуск в режиме разработки с горячей перезагрузкой (откройте [http://localhost:5173](http://localhost:5173))
-- `npm run build` - Сборка для продакшена
-- `npm run lint` - Проверка кода с [ESLint](https://eslint.org/)
+```sh
+npm run dev
+```
 
-Для дополнительной настройки см. [Документацию Vite](https://vite.dev/config/).
+### Compile and Minify for Production
+
+```sh
+npm run build
+```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+npm run lint
+```

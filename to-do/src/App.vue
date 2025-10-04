@@ -1,83 +1,72 @@
-<script setup>
-  import { reactive, computed, ref } from 'vue'
-  import TodoListitem from './components/TodoListitem.vue'
-  import TodoForm from './components/TodoForm.vue'
-
-  const todos = reactive([
-    {
-      id: 1,
-      text: 'Изучить компоненты Vue.js',
-      completed: true
-    },
-    {
-      id: 2,
-      text: 'Создать TodoList приложение',
-      completed: false
-    },
-    {
-      id: 3,
-      text: 'Похвалить себя за отличную работу',
-      completed: false
-    }
-  ])
-
-  const newTodoText = ref('')
-
-  const removeTodo = (index) => {
-    todos.splice(index, 1)
-  }
-
-  const remainTodos = computed(() => {
-    return todos.filter((todo) => !todo.completed).length
-  })
-
-  const clearCompleted = () => {
-    todos.filter((todo) => todo.completed).forEach((todo) => {
-      removeTodo(todos.indexOf(todo))
-    })
-  }
-
-  const clearAll = () => {
-    todos.splice(0, todos.length)
-  }
-
-  const addTodo = () => {
-    if (newTodoText.value.trim()) {
-      todos.push({
-        id: Date.now(),
-        text: newTodoText.value.trim(),
-        completed: false
-      })
-    }
-  }
-
-</script>
-
 <template>
   <div class="container todo-app">
     <h1 class="title">Todo List</h1>
+    <TodoForm @add-todo="addTodo" />
 
-    <TodoForm v-model="newTodoText" @add-todo="addTodo" class="todo-app__form"  />
-    <div class="todo-app__main">
-      <ul class="todo-list">
-        <li class="todo-list__item"  v-for="(todo, index) in todos" :key="todo.id" :class="{ 'todo-list__item--completed': todo.completed }">
-          <TodoListitem
-            v-bind="todo" @complete-todo.once="() => (todo.completed = !todo.completed)"
-            @remove-todo="removeTodo(index)"
-          />
-        </li>
-      </ul>
-      <div v-if="!todos.length" class="todo-list__empty">
-        <p>Список задач пуст</p>
-      </div>
-    </div>
+    <TodoList :todos="todos" @remove-todo="removeTodo" @complete-todo="completeTodo" />
 
-    <div class="todo-app__footer" v-if="todos.length">
-      <p class="todo-app__footer-text">Осталось {{ remainTodos }} задания(й)</p>
-      <button @click="clearCompleted" class="btn btn--clear">Удалить завершенные</button>
-      <button @click="clearAll" class="btn btn--clear">Очистить список</button>
-    </div>
+    <TodoFooter
+      v-if="todos.length"
+      :remaining="remainingTodos"
+      @clear-completed="clearCompleted"
+      @clear-all="clearAll"
+    />
+    <div v-show="isLoading">Загрузка...</div>
+    <div v-show="error">Произошла ошибка: {{ error }}</div>
   </div>
 </template>
 
-<style src="./app.css"></style>
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import TodoForm from './components/TodoForm.vue'
+import TodoList from './components/TodoList.vue'
+import TodoFooter from './components/TodoFooter.vue'
+import { useFetch } from './composables/useFetch.js'
+
+const todos = ref([])
+const { isLoading, error, fetchData } = useFetch()
+
+const fetchTodos = async () => {
+  todos.value = await fetchData('/todos')
+}
+
+const addTodo = async (text) => {
+  await fetchData('/todos', { method: 'POST', body: JSON.stringify({ text, completed: false }) })
+  await fetchTodos()
+}
+
+const removeTodo = async (id) => {
+  await fetchData(`/todos/${id}`, { method: 'DELETE' })
+  await fetchTodos()
+}
+
+const completeTodo = async (id, completed) => {
+  await fetchData(`/todos/${id}`, { method: 'PATCH', body: JSON.stringify({ completed }) })
+  await fetchTodos()
+}
+
+const remainingTodos = computed(() =>
+  todos.value.filter((todo) => !todo.completed).length
+)
+
+const clearCompleted = async () => {
+  const allTodos = await fetchData('/todos')
+  const completedTodos = allTodos.filter(t => t.completed)
+  for (const todo of completedTodos) {
+    await fetchData(`/todos/${todo.id}`, { method: 'DELETE' })
+  }
+  await fetchTodos()
+}
+
+const clearAll = async () => {
+  const allTodos = await fetchData('/todos')
+  for (const todo of allTodos) {
+    await fetchData(`/todos/${todo.id}`, { method: 'DELETE' })
+  }
+  await fetchTodos()
+}
+
+onMounted(fetchTodos)
+</script>
+
+<style src="./App.css"></style>
