@@ -1,12 +1,17 @@
 <script setup>
-  import { ref } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { Form, Field, ErrorMessage } from 'vee-validate'
   import { schema } from './validationSchema.js'
-  import { cities } from './constants.js'
+  import { db } from './firebase.js'
+  import { collection, getDocs, addDoc } from 'firebase/firestore'
 
   const comments = ref('')
   const terms = ref(false)
   const success = ref(false)
+  const cities = ref([])
+  const citiesLoading = ref(true)
+  const formLoading = ref(false)
+  const errorMessage = ref('')
 
   const passwordFieldType = ref('password')
   const confirmPasswordFieldType = ref('password')
@@ -19,16 +24,80 @@
     confirmPasswordFieldType.value = confirmPasswordFieldType.value === 'password' ? 'text' : 'password'
   }
 
+  async function register(values) {
+    formLoading.value = true
+    errorMessage.value = ''
+    success.value = false
 
+    try {
+      // Проверяем уникальность email
+      const usersCollection = collection(db, 'users')
+      const usersSnapshot = await getDocs(usersCollection)
+      const existingUser = usersSnapshot.docs.find((doc) => doc.data().email === values.email)
+      if (existingUser) {
+        errorMessage.value = 'Пользователь с таким e-mail уже существует'
+        return
+      }
 
+      // Собираем объект с только заполненными полями
+      const newUser = {}
+      if (values.firstname) newUser.firstname = values.firstname
+      if (values.lastname) newUser.lastname = values.lastname
+      if (values.country) newUser.country = values.country
+      if (values.city) newUser.city = values.city
+      if (values.phone) newUser.phone = values.phone
+      if (values.email) newUser.email = values.email
+      if (values.password) newUser.password = values.password
+      if (values.confirmPassword) newUser.confirmPassword = values.confirmPassword
+      if (comments.value) newUser.comments = comments.value
+      if (terms.value) newUser.terms = terms.value
 
-  function register(values) {
-    success.value = true
-    console.log(values)
+      // Добавляем в Firebase
+      await addDoc(usersCollection, newUser)
+      success.value = true
+    } catch (error) {
+      console.error('Error registering user:', error)
+      errorMessage.value = 'Ошибка регистрации: ' + error.message
+    } finally {
+      formLoading.value = false
+    }
   }
+
+  function resetForm() {
+    success.value = false
+    errorMessage.value = ''
+    comments.value = ''
+    terms.value = false
+  }
+
+  const fetchCities = async () => {
+    citiesLoading.value = true
+    errorMessage.value = ''
+    try {
+      const citiesCollection = collection(db, 'cities')
+      const citiesSnapshot = await getDocs(citiesCollection)
+      const firebaseCities = citiesSnapshot.docs.map(doc => doc.data())
+      if (firebaseCities.length > 0) {
+        cities.value = firebaseCities
+      } else {
+        cities.value = []
+      }
+    } catch (error) {
+      console.error('Error fetching cities from Firebase:', error)
+      errorMessage.value = 'Ошибка загрузки городов: ' + error.message
+      cities.value = []
+    } finally {
+      citiesLoading.value = false
+    }
+  }
+
+  onMounted(() => {
+    fetchCities()
+  })
 </script>
 
 <template>
+  <div v-if="citiesLoading || formLoading" class="overlay">Идет загрузка данных...</div>
   <div class="container">
       <h1 class="title">Регистрация</h1>
       <Form :validation-schema="schema" class="registration-form" @submit="register">
@@ -38,7 +107,7 @@
           <ErrorMessage class="message--error" name="firstname" />
         </div>
         <div class="form-group">
-          <div class="form-label" for="lastname">Фамилия *</div>
+          <label class="form-label" for="lastname">Фамилия *</label>
           <Field class="form-control" name="lastname" type="text" id="lastname" required />
           <ErrorMessage class="message--error" name="lastname" />
         </div>
@@ -52,7 +121,7 @@
           <div class="custom-select">
             <Field  as="select" class="form-control" id="city" name="city" required>
               <option value="" disabled selected>Выберите город</option>
-              <option v-for="city in cities" :key="city.value" :value="city.value">{{ city.label }}</option>
+              <option v-for="city in cities" :key="city.value" :value="city.value">{{ city.value }}</option>
             </Field>
             <ErrorMessage class="message--error" name="city" />
           </div>
@@ -110,9 +179,10 @@
           </label>
           <ErrorMessage class="message--error" name="terms" />
         </div>
-        <button class="btn" type="submit">Зарегистрироваться</button>
-        <button class="btn" type="reset">Очистить форму</button>
+        <button class="btn" type="submit" :disabled="formLoading">Зарегистрироваться</button>
+        <button class="btn" type="button" @click="resetForm">Очистить форму</button>
       </Form>
+      <div v-if="errorMessage" class="message message--error">{{ errorMessage }}</div>
       <div v-if="success" class="message message--success">Регистрация прошла успешно!</div>
     </div>
 </template>
@@ -126,6 +196,21 @@ body {
   font-family: 'Open Sans', sans-serif;
   background-color: #f5f5f5;
   color: #333;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  color: white;
+  font-size: 1.5rem;
 }
 
 .container {
