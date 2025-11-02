@@ -1,21 +1,9 @@
 <script setup>
+  import { useBasketStore } from '../stores/basketStore'
   import BasketTableItem from './BasketTableItem.vue'
   import BasketTableSummary from './BasketTableSummary.vue'
 
-  defineProps({
-    basket: {
-      type: Array,
-      required: true
-    },
-    totalPrice: {
-      type: Number,
-      required: true
-    },
-    totalTax: {
-      type: Number,
-      required: true
-    }
-  })
+  const basketStore = useBasketStore()
 </script>
 
 <template>
@@ -33,26 +21,19 @@
       <tbody class="basket-table__body">
 
         <BasketTableItem
-          v-for="(item, index) in basket"
+          v-for="(item, index) in basketStore.basket"
           :key="item.id"
           :basketItem="item"
           :index="index"
-          @increaseItemQuantity="$emit('increaseItemQuantity', index)"
-          @decreaseItemQuantity="$emit('decreaseItemQuantity', index)"
-          @removeItem="$emit('removeItem', index)"
         />
 
-        <tr v-if="!basket.length">
+        <tr v-if="!basketStore.basket.length">
           <td colspan="5">
             <p class="basket-table__empty">No items</p>
           </td>
         </tr>
 
-        <BasketTableSummary
-          :basket="basket"
-          :totalPrice="totalPrice"
-          :totalTax="totalTax"
-        />
+        <BasketTableSummary />
       </tbody>
     </table>
   </div>

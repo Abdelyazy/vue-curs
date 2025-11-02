@@ -1,29 +1,16 @@
 <script setup>
+  import { useBasketStore } from '../stores/basketStore'
 
-  defineProps({
-    basket: {
-      type: Array,
-      required: true
-    },
-    totalPrice: {
-      type: Number,
-      required: true
-    },
-    totalTax: {
-      type: Number,
-      required: true
-    }
-  })
-
+  const basketStore = useBasketStore()
 </script>
 
 <template>
 
-  <tr v-if="basket.length">
+  <tr v-if="basketStore.basket.length">
     <td colspan="5">
       <div class="basket-table__summary">
-        <p class="basket-table__total">Total <b>{{ totalPrice.toFixed(2) }} $</b></p>
-        <p>Tax {{ totalTax.toFixed(2) }} $</p>
+        <p class="basket-table__total">Total <b>{{ basketStore.totalPrice.toFixed(2) }} $</b></p>
+        <p>Tax {{ basketStore.totalTax.toFixed(2) }} $</p>
       </div>
     </td>
   </tr>

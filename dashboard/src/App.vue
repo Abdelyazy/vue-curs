@@ -1,51 +1,91 @@
-<script setup>
-import { ref, onMounted } from 'vue'
-import { logout } from './auth/index.js'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-const loggedIn = ref(false)
-
-const checkAuth = () => {
-  loggedIn.value = localStorage.getItem('isLoggedIn') === 'true'
-}
-
-onMounted(() => {
-  checkAuth()
-})
-
-const handleLogout = () => {
-  logout()
-  loggedIn.value = false
-  router.push('/login')
-}
-</script>
-
 <template>
-  <div id="app">
-    <div class="wrapper">
-      <nav class="navigation">
-        <div class="navigation-left">
-          <RouterLink v-if="loggedIn" to="/">Dashboard</RouterLink>
-          <RouterLink v-if="loggedIn" to="/tasks">Tasks</RouterLink>
-          <RouterLink v-if="loggedIn" to="/settings">Settings</RouterLink>
-        </div>
-        <div class="navigation-right" v-if="loggedIn">
-          <button class="btn-logout" @click="handleLogout">Logout</button>
-        </div>
-        <div class="navigation-right" v-else>
-          <RouterLink to="/login" class="btn-login">Login</RouterLink>
-        </div>
-      </nav>
-      <main class="container">
-        <transition name="fade">
-          <RouterView @login="checkAuth" />
-        </transition>
-      </main>
-    </div>
+  <div class="wrapper">
+    <nav class="navigation">
+      <div class="navigation-left">
+        <RouterLink to="/dashboard">Dashboard</RouterLink>
+        <RouterLink to="/tasks">Tasks</RouterLink>
+        <RouterLink to="/settings">Settings</RouterLink>
+      </div>
+    </nav>
+    <main class="container">
+      <RouterView v-slot="{ Component }">
+        <Transition name="fade" mode="out-in">
+          <Component :is="Component" />
+        </Transition>
+      </RouterView>
+    </main>
   </div>
 </template>
 
-<style scoped>
-/* Only component-specific styles remain here if needed */
+
+<style>
+body {
+  font-family: sans-serif;
+  margin: 0;
+  background-color: #f6f7f9;
+  color: #333;
+}
+
+.wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  top: 20vh;
+  position: relative;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1e1e2f;
+  border-radius: 8px 8px 0 0;
+  padding: 12px 20px;
+  color: white;
+  line-height: 1.75;
+}
+
+.navigation-left,
+.navigation-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navigation a {
+  color: #f9f9f9;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.3s ease;
+}
+
+.navigation a.router-link--intermediate,
+.navigation a.router-link--active {
+  opacity: 1;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.navigation a:hover {
+  opacity: 0.8;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

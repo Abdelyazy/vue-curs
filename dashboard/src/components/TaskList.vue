@@ -1,19 +1,26 @@
+<script setup>
+  import {useTasksStore} from '@/stores/tasks'
+
+  const tasksStore = useTasksStore()
+
+</script>
+
 <template>
   <div>
-    <h1>Список задач</h1>
+    <h1>Список задач ({{ tasksStore.tasksTotal }})</h1>
     <ul class="task-list">
-      <li class="task-item"><RouterLink to="/tasks/1" class="task-link">Задача 1</RouterLink></li>
-      <li class="task-item"><RouterLink to="/tasks/2" class="task-link">Задача 2</RouterLink></li>
-    </ul>
+        <li v-for="task in tasksStore.tasks" :key="task.id" class="task-item">
+          <RouterLink class="task-link" :to="`/tasks/${task.id}`">{{ task.title }}</RouterLink>
+        </li>
+      </ul>
   </div>
 </template>
 
 <style scoped>
-
 .task-list {
   list-style-type: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 30px;
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
@@ -38,5 +45,4 @@
 .task-link:hover {
   background-color: #e0e0e0;
 }
-
 </style>

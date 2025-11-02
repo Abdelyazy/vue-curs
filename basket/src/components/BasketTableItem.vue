@@ -1,4 +1,5 @@
 <script setup>
+  import { useBasketStore } from '../stores/basketStore'
 
   defineProps({
     basketItem: {
@@ -10,6 +11,8 @@
       required: true
     }
   })
+
+  const basketStore = useBasketStore()
 </script>
 
 <template>
@@ -31,16 +34,16 @@
     </td>
     <td>
       <div class="basket-item__quantity">
-        <button @click="$emit('decreaseItemQuantity', index)" class="quantity-button">–</button>
+        <button @click="basketStore.decreaseItemQuantity(index)" class="quantity-button">–</button>
         <input type="number" :value="basketItem.quantity" min="1" readonly />
-        <button @click="$emit('increaseItemQuantity', index)" class="quantity-button">+</button>
+        <button @click="basketStore.increaseItemQuantity(index)" class="quantity-button">+</button>
       </div>
     </td>
     <td>
       <p class="basket-item__price">{{ (basketItem.price * basketItem.quantity).toFixed(2) }} $</p>
     </td>
     <td>
-      <button @click="$emit('removeItem', index)" class="btn btn-delete" aria-label="Удалить">
+      <button @click="basketStore.removeItem(index)" class="btn btn-delete" aria-label="Удалить">
         <svg
           class="w-6 h-6 text-gray-800 dark:text-white"
           aria-hidden="true"
