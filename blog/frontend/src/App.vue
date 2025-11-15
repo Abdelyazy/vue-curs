@@ -1,15 +1,15 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import LayoutContainer from './components/LayoutContainer.vue';
+import LayoutHeader from './components/layout/LayoutHeader.vue';
+import LayoutFooter from './components/layout/LayoutFooter.vue';
 
 </script>
 
 <template>
   <div class="bg-gray-100 min-h-screen flex flex-col">
-    <header class="bg-white fixed top-0 left-0 right-0">
-      <LayoutContainer>
-        Шапка
-      </LayoutContainer>
+
+    <header class="bg-white fixed top-0 left-0 right-0 z-10">
+      <LayoutHeader />
     </header>
 
     <main class="flex-1 mt-26">
@@ -17,10 +17,9 @@ import LayoutContainer from './components/LayoutContainer.vue';
     </main>
 
     <footer class="bg-white">
-      <LayoutContainer>
-        Подвал
-      </LayoutContainer>
+      <LayoutFooter />
     </footer>
+
   </div>
 </template>
 

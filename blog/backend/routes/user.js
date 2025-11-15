@@ -23,6 +23,10 @@ router.patch('/:id', authenticated, hasRole([ROLES.ADMIN]), async (req, res) => 
     role: req.body.roleId
   })
 
+  if (!newUser) {
+    return res.status(404).send({ error: 'Пользователь не найден' });
+  }
+
   res.send({ data: mapUser(newUser) })
 })
 
