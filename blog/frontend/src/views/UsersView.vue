@@ -9,6 +9,7 @@ import { useUsersStore } from '@/stores/users';
 import { useRolesStore } from '@/stores/roles';
 
 import MassegeBox from '@/components/base/MassegeBox.vue';
+import InputBase from '@/components/base/InputBase.vue';
 
 
 const users = ref([]);
@@ -119,9 +120,9 @@ const handleUserRole = async (user) => {
             }) }}</td>
             <td class="p-2">
               <form  class="flex gap-2 relative" @submit.prevent="handleUserRole(user)">
-                <select :name="`user-${user.id}-role`" v-model.number="user.roleId" :key="user.id" class="w-full border border-gray-300 rounded-md p-2">
+                <InputBase as="select" :name="`user-${user.id}-role`" v-model.number="user.roleId" :key="user.id">
                   <option v-for="role in rolesStore.roles" :key="`${user.id}-${role.id}`" :value="role.id">{{ role.name }}</option>
-                </select>
+                </InputBase>
                 <button type="submit" class="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white rounded-md p-2 px-3" >
                   <FontAwesomeIcon :icon="faFloppyDisk" />
                 </button>

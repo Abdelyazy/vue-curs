@@ -2,6 +2,8 @@
 import buttonBase from '@/components/base/buttonBase.vue';
 import { useArticleStore } from '@/stores/article';
 import { ref } from 'vue';
+import LabelBase from './base/LabelBase.vue';
+import InputBase from './base/InputBase.vue';
 
 const articleStore = useArticleStore();
 
@@ -29,8 +31,8 @@ const handlecommentSubmit = async () => {
 
 <template>
   <form class="bg-white rounded-md shadow-md p-4 mb-8" @submit.prevent="handlecommentSubmit">
-    <label for="newComment" class="block text-gray-700">Ваш комментарий</label>
-    <textarea v-model="newComment" id="newComment" class="w-full border border-gray-300 rounded-md p-2 mb-4"></textarea>
+    <LabelBase for="newComment" >Ваш комментарий</LabelBase>
+    <InputBase name="newComment" as="textarea" v-model="newComment" id="newComment"></InputBase>
     <div class="flex justify-between">
       <p class="text-red-500" v-if="errorMessage">{{ errorMessage }}</p>
       <buttonBase type="submit" class="w-xs ml-auto">Отправить</buttonBase>

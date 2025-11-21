@@ -9,16 +9,13 @@ export const useArticleStore = defineStore('article', () => {
     try {
       const response = await fetch(`/api/posts/${id}`);
 
-      if (!response.ok) {
-        throw new Error('Ошибка запроса статьи');
-      }
-
       const data = await response.json();
       if (data.error) {
         throw new Error(data.error);
       }else {
         article.value = data.data;
       }
+      return data
     } catch(error) {
       console.error('Ошибка получения статьи:', error);
     }
@@ -75,6 +72,27 @@ export const useArticleStore = defineStore('article', () => {
     }
   }
 
+  const addaArticle = async (newArticle) => {
+    try {
+      const response = await fetch('/api/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newArticle)
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка добавления статьи');
+      }
+
+      const data = await response.json();
+      return data
+    } catch(error) {
+      console.error('Ошибка добавления статьи:', error);
+    }
+  }
+
   const addComment = async (newComment) => {
     try {
       const response = await fetch(`/api/posts/${article.value.id}/comments`, {
@@ -121,7 +139,7 @@ export const useArticleStore = defineStore('article', () => {
     }
   }
 
-  return { article, isInEditMode, toggleEditMode, fetchArticle, updateArticle, deleteArticle, addComment, deleteComment }
+  return { article, isInEditMode, toggleEditMode, fetchArticle, updateArticle, deleteArticle, addaArticle, addComment, deleteComment }
 })
 
 if (import.meta.hot) {

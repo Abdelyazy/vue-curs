@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faTrash, faArrowRotateLeft, faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 import { useArticleStore } from '@/stores/article';
 import { useModalStore } from '@/stores/modal';
+import InputBase from './base/InputBase.vue';
 
 
 const router = useRouter();
@@ -54,13 +55,13 @@ const handleDeleteArticle = () => {
     </div>
 
     <p class="mb-4">
-      <input class="w-full border border-gray-300 rounded-md p-2" type="text" v-model="editedArticle.imageUrl" placeholder="URL изображения">
+      <InputBase type="text" name="imageUrl" v-model="editedArticle.imageUrl" placeholder="URL изображения" />
     </p>
     <p class="mb-4">
-      <input class="w-full border border-gray-300 rounded-md p-2" type="text" v-model="editedArticle.title" placeholder="Название статьи">
+      <InputBase name="title" type="text" v-model="editedArticle.title" placeholder="Название статьи" />
     </p>
     <p class="mb-4">
-      <textarea class="w-full border border-gray-300 rounded-md p-2" rows="15" textarea v-model="editedArticle.content" placeholder="Содержание статьи"></textarea>
+      <InputBase as="textarea" name="content"  rows="15" textarea v-model="editedArticle.content" placeholder="Содержание статьи"></InputBase>
     </p>
   </form>
 </template>

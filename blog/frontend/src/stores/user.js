@@ -32,6 +32,9 @@ export const useUserStore = defineStore('user', () => {
       }
 
       const data = await response.json();
+      if (!data.error) {
+        user.value = data.data;
+      }
       return data;
     } catch (error) {
       console.error('Ошибка авторизации пользователя:', error);

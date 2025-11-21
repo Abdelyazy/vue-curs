@@ -14,7 +14,7 @@
     const response = await userStore.logout();
 
     if (!response.error && route.meta.requiresAuth) {
-      router.push('/');
+      router.push('/login');
     }
   }
 </script>

@@ -4,5 +4,7 @@ import { Field } from 'vee-validate';
 </script>
 
 <template>
-  <Field class="border bg-white border-gray-300 w-full rounded-md p-2"></Field>
+  <Field class="border bg-white border-gray-300 w-full rounded-md p-2">
+    <slot></slot>
+  </Field>
 </template>

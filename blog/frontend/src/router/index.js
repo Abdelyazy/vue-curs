@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useUserStore } from '../stores/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,7 +10,7 @@ const router = createRouter({
     {
       path: '/users',
       component: () => import('../views/UsersView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requireAdmin: true },
     },
     {
       path: '/login',
@@ -24,27 +23,20 @@ const router = createRouter({
     {
       path: '/post',
       component: () => import('../views/NewsArticleView.vue'),
-      meta: { requiresAuth: true },
+      meta: { requireAdmin: true },
     },
     {
       path: '/post/:id',
       component: () => import('../views/ArticleView.vue'),
       props: true
     },
+    {
+      path: '/:pathMatch(.*)*',
+      component: () => import('../views/NotFoundView.vue')
+    }
   ],
 })
 
-router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth) {
-    const userStore = useUserStore();
-    if (userStore.isAuthorized) {
-      next()
-    } else {
-      next('/login')
-    }
-  }else {
-    next()
-  }
-})
+
 
 export default router
